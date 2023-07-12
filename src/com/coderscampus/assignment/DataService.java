@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class DataService {
 	
-	public CompletableFuture<List<Integer>> fetchData() {
+	public CompletableFuture<List<Integer>> fetchData() { 
 		Assignment8 assignment8 = new Assignment8();
 		
 		List<Integer> numbers = new ArrayList<>();
@@ -25,13 +25,34 @@ public class DataService {
 			task.add(tasks);
 		}
 		
-		CompletableFuture<Void> allTasks =  CompletableFuture.allOf(task.toArray(new CompletableFuture[0]));
-        return allTasks.thenApplyAsync(v -> numbers);
+		CompletableFuture<Void> allTasks = CompletableFuture.allOf(task.toArray(new CompletableFuture[0])); 
+		
+        return allTasks.thenApplyAsync(allTasksComplete -> numbers); 
 	}
 	
 	public void countData(List<Integer> numbers) {
 		Map<Integer, Integer> countMap = numbers.stream()
-												.collect(Collectors.toMap(Function.identity(), duplicateValue -> 1, Integer::sum));
+												.collect(Collectors.toMap(Function.identity(), duplicateValue -> 1, Integer::sum)); //Understand toMap parameters
         countMap.forEach((number, count) -> System.out.println(number + "=" + count));
 	}
 }
+
+//    OLD WAY
+//public CompletableFuture<List<Integer>> fetchData() { 
+//	Assignment8 assignment8 = new Assignment8();
+//	
+//	List<CompletableFuture<List<Integer>>> tasks = new ArrayList<>();
+//	
+//	ExecutorService executor = Executors.newCachedThreadPool();
+//	
+//	for(int i = 0; i<1000; i++) {
+//		CompletableFuture<List<Integer>> task  = CompletableFuture.supplyAsync(() -> assignment8.getNumbers(), executor);
+//					                                     
+//		tasks.add(task);
+//	}
+//	
+//	return CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0]))
+//           .thenApply(v -> tasks.stream()
+//            					.map(CompletableFuture::join)
+//            					.flatMap(List::stream)
+//            					.collect(Collectors.toList()));
