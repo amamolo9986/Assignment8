@@ -20,10 +20,14 @@ public class DataService {
 		ExecutorService executor = Executors.newCachedThreadPool();
 		
 		for(int i = 0; i<1000; i++) {
-			CompletableFuture<Void> tasks = CompletableFuture.supplyAsync(() -> assignment8.getNumbers(), executor)
-						                                     .thenAcceptAsync(numbers::addAll, executor);
-			task.add(tasks);
-		}
+			 CompletableFuture<Void> tasks = CompletableFuture.supplyAsync(() -> assignment8.getNumbers(), executor)
+		                .thenAcceptAsync(data -> {
+		                    synchronized (numbers) {
+		                        numbers.addAll(data);
+		                    }
+		                }, executor);
+		        task.add(tasks);
+		    }
 		
 		CompletableFuture<Void> allTasks = CompletableFuture.allOf(task.toArray(new CompletableFuture[0])); 
 		
