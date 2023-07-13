@@ -32,7 +32,7 @@ public class DataService {
 	
 	public void countData(List<Integer> numbers) {
 		Map<Integer, Integer> countMap = numbers.stream()
-												.collect(Collectors.toMap(Function.identity(), duplicateValue -> 1, Integer::sum));
+												.collect(Collectors.toMap(Function.identity(), initialValue -> 1, Integer::sum));
         countMap.forEach((number, count) -> System.out.println(number + "=" + count));
 	}
 }
